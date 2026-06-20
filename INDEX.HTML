@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>متجري - إدارة المبيعات والمخزون</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Cairo',sans-serif;
+}
+
+body{
+    background:#f4f7f6;
+    color:#333;
+}
+
+header{
+    background:#0b7a53;
+    color:#fff;
+    padding:20px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.btn{
+    background:#fff;
+    color:#0b7a53;
+    padding:12px 25px;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.hero{
+    padding:80px 10%;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.hero-text{
+    flex:1;
+    min-width:300px;
+}
+
+.hero-text h1{
+    font-size:50px;
+    margin-bottom:20px;
+    color:#0b7a53;
+}
+
+.hero-text p{
+    font-size:20px;
+    line-height:1.8;
+    margin-bottom:30px;
+}
+
+.download{
+    background:#0b7a53;
+    color:white;
+    padding:15px 30px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:18px;
+}
+
+.phone{
+    flex:1;
+    min-width:300px;
+    text-align:center;
+}
+
+.phone img{
+    width:320px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.features{
+    padding:70px 10%;
+    background:white;
+}
+
+.features h2{
+    text-align:center;
+    margin-bottom:40px;
+    color:#0b7a53;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#f8f8f8;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.card h3{
+    color:#0b7a53;
+    margin-bottom:15px;
+}
+
+footer{
+    background:#0b7a53;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+@media(max-width:768px){
+.hero{
+    text-align:center;
+}
+.hero-text h1{
+    font-size:35px;
+}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">متجري</div>
+<a href="#" class="btn">تحميل التطبيق</a>
+</header>
+
+<section class="hero">
+
+<div class="hero-text">
+<h1>إدارة متجرك بسهولة</h1>
+
+<p>
+تطبيق متجري يساعدك على إدارة المبيعات،
+المخزون، العملاء، الموردين والتقارير
+في مكان واحد وبواجهة سهلة وسريعة.
+</p>
+
+<a href="#" class="download">تحميل الآن</a>
+</div>
+
+<div class="phone">
+<img src="screenshot.png" alt="تطبيق متجري">
+</div>
+
+</section>
+
+<section class="features">
+
+<h2>مميزات التطبيق</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>📦 إدارة المنتجات</h3>
+<p>إضافة وتعديل المنتجات بسهولة.</p>
+</div>
+
+<div class="card">
+<h3>🧾 الفواتير</h3>
+<p>إنشاء فواتير البيع والشراء بسرعة.</p>
+</div>
+
+<div class="card">
+<h3>👥 العملاء</h3>
+<p>متابعة العملاء والديون المستحقة.</p>
+</div>
+
+<div class="card">
+<h3>📊 التقارير</h3>
+<p>تقارير يومية وشهرية للمبيعات.</p>
+</div>
+
+<div class="card">
+<h3>⚠️ تنبيهات المخزون</h3>
+<p>إشعارات عند انخفاض الكميات.</p>
+</div>
+
+<div class="card">
+<h3>🚚 الموردون</h3>
+<p>إدارة الموردين وعمليات الشراء.</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+جميع الحقوق محفوظة © 2026 متجري
+</footer>
+
+</body>
+</html>
