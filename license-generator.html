@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تاجر — لوحة إدارة التراخيص</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F0F4F2; --surface:#fff; --primary:#0B5E47; --primary-dark:#073D2E;
+  --primary-soft:#DCF0E6; --accent:#D98A1E; --accent-soft:#FAF0DC;
+  --danger:#BF3A2A; --danger-soft:#F7E5E2;
+  --ink:#162520; --muted:#6B7D76; --border:#D2E2D8;
+  --shadow:0 1px 3px rgba(0,0,0,0.05),0 2px 10px rgba(11,94,71,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;direction:rtl;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+h1,h2,h3{font-family:'Cairo',sans-serif;}
+
+.topbar{background:linear-gradient(135deg,#0E7558,#073D2E);color:#fff;padding:16px 24px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(7,40,28,0.22);}
+.topbar h1{font-size:20px;font-weight:900;}
+.topbar .sub{font-size:12px;opacity:.7;margin-top:2px;}
+.topbar .badge{background:rgba(255,255,255,.15);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-right:auto;}
+
+.container{max-width:900px;margin:0 auto;padding:24px 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:640px){.grid{grid-template-columns:1fr;}}
+
+.card{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow);}
+.card h2{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.sec{font-size:13px;font-weight:800;color:var(--primary-dark);margin:24px 0 12px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:"";flex:1;height:1.5px;background:var(--border);}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px;}
+.field input,.field select,.field textarea{
+  width:100%;border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 12px;font-size:14px;font-family:'Tajawal',sans-serif;
+  background:#fff;color:var(--ink);
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary);}
+
+.secret-warn{background:var(--danger-soft);border:1.5px solid var(--danger);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--danger);margin-bottom:16px;display:flex;gap:8px;align-items:flex-start;}
+
+.seg{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;}
+.seg button{flex:1;border:none;background:transparent;padding:10px 8px;font-size:12.5px;font-family:'Tajawal',sans-serif;font-weight:700;color:var(--muted);cursor:pointer;}
+.seg button.on{background:var(--primary);color:#fff;}
+
+.btn{border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-sm{padding:7px 12px;font-size:12px;width:auto;border-radius:8px;}
+.btn-danger{background:var(--danger-soft);color:var(--danger);}
+
+.result-box{
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  color:#fff;border-radius:14px;padding:20px;margin-top:14px;
+  text-align:center;display:none;
+}
+.result-box .rb-label{font-size:11.5px;opacity:.75;margin-bottom:6px;}
+.result-box .rb-key{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:2px;word-break:break-all;margin-bottom:12px;}
+.result-box .rb-meta{font-size:12px;opacity:.8;margin-bottom:14px;}
+.result-box .rb-copy{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 16px;font-size:13px;font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer;display:inline-block;}
+.result-box .rb-copy:hover{background:rgba(255,255,255,.25);}
+
+.tier-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;}
+.tier-PR{background:var(--primary-soft);color:var(--primary-dark);}
+.tier-BS{background:var(--accent-soft);color:#7a4d0a;}
+.tier-TR{background:#f0f0f0;color:var(--muted);}
+
+table{width:100%;border-collapse:collapse;}
+th,td{text-align:right;padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);}
+th{font-size:11.5px;color:var(--muted);font-weight:700;background:var(--bg);}
+td.mono-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;}
+tr:hover td{background:var(--bg);}
+.copy-cell{cursor:pointer;color:var(--primary);font-size:18px;}
+.exp-warn{color:var(--danger);}
+.exp-ok{color:var(--primary);}
+
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--surface);border-radius:12px;padding:14px;box-shadow:var(--shadow);text-align:center;}
+.stat .sv{font-size:26px;font-weight:800;font-family:'Cairo',sans-serif;color:var(--primary);}
+.stat .sl{font-size:11.5px;color:var(--muted);margin-top:3px;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;box-shadow:0 6px 16px rgba(0,0,0,.22);animation:tst 2.3s forwards;z-index:99;}
+@keyframes tst{0%{opacity:0;transform:translate(-50%,8px);}12%{opacity:1;transform:translate(-50%,0);}85%{opacity:1;}100%{opacity:0;}}
+
+.empty-table{text-align:center;padding:32px;color:var(--muted);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <h1>🔑 لوحة إدارة التراخيص</h1>
+    <div class="sub">تاجر — أداة خاصة بالمطوّر</div>
+  </div>
+  <span class="badge" id="totalBadge">0 ترخيص</span>
+</div>
+
+<div class="container">
+
+  <div class="grid">
+
+    <!-- LEFT: Generator -->
+    <div>
+      <div class="card">
+        <h2>⚡ توليد ترخيص جديد</h2>
+
+        <div class="secret-warn">
+          ⚠️ تأكد أن المفتاح السري هنا يطابق تماماً ما في التطبيق (<code>LICENSE_SECRET</code>)
+        </div>
+
+        <div class="field">
+          <label>المفتاح السري (يطابق التطبيق)</label>
+          <input id="secretKey" type="password" value="TJR-8hmvzGnHNvms-JNW5MunRCBSC-fuGYVNaNhkxD" placeholder="المفتاح السري...">
+          <div style="margin-top:4px;display:flex;gap:6px;">
+            <button class="btn btn-sm btn-outline" id="toggleSecret" onclick="toggleSecret()">إظهار</button>
+            <button class="btn btn-sm btn-outline" onclick="generateSecret()">🎲 مفتاح عشوائي</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>اسم العميل / المحل (للتوثيق فقط)</label>
+          <input id="custName" placeholder="مثال: محل أحمد — وهران">
+        </div>
+
+        <div class="field">
+          <label>نوع الترخيص</label>
+          <div class="seg" id="tierSeg">
+            <button data-tier="PR" class="on" onclick="setTier('PR')">💎 احترافي</button>
+            <button data-tier="BS" onclick="setTier('BS')">⭐ أساسي</button>
+            <button data-tier="TR" onclick="setTier('TR')">⏳ تجريبي</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>مدة الصلاحية</label>
+          <div class="seg" id="durSeg">
+            <button data-dur="30" onclick="setDur(30)">30 يوم</button>
+            <button data-dur="90" onclick="setDur(90)">3 أشهر</button>
+            <button data-dur="180" class="on" onclick="setDur(180)">6 أشهر</button>
+            <button data-dur="365" onclick="setDur(365)">سنة</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>أو تاريخ انتهاء مخصص</label>
+          <input type="date" id="customDate">
+        </div>
+
+        <button class="btn btn-primary" onclick="generateKey()">🔑 توليد المفتاح</button>
+
+        <div class="result-box" id="resultBox">
+          <div class="rb-label">مفتاح الترخيص</div>
+          <div class="rb-key" id="resultKey"></div>
+          <div class="rb-meta" id="resultMeta"></div>
+          <button class="rb-copy" onclick="copyKey()">📋 نسخ المفتاح</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Validator -->
+    <div>
+      <div class="card">
+        <h2>🔍 التحقق من مفتاح</h2>
+        <div class="field">
+          <label>المفتاح السري (نفس الحقل أعلاه)</label>
+          <input id="vSecret" type="password" placeholder="المفتاح السري...">
+        </div>
+        <div class="field">
+          <label>المفتاح المراد التحقق منه</label>
+          <input id="vKey" class="mono" style="font-size:13px;letter-spacing:1px;" placeholder="TAJER-PR-261231-ABCD1234" autocapitalize="characters">
+        </div>
+        <button class="btn btn-outline" onclick="verifyKey()">🔎 تحقق</button>
+        <div id="vResult" style="margin-top:14px;padding:14px;border-radius:12px;font-size:13px;display:none;"></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2>📋 تنسيق المفاتيح</h2>
+        <div style="font-size:12.5px;line-height:2;color:var(--muted);">
+          <div><strong style="color:var(--ink);">الصيغة:</strong> <span class="mono">TAJER-{نوع}-{YYMMDD}-{توقيع8}</span></div>
+          <div><strong style="color:var(--ink);">💎 PR</strong> — ترخيص احترافي (كل الميزات)</div>
+          <div><strong style="color:var(--ink);">⭐ BS</strong> — ترخيص أساسي</div>
+          <div><strong style="color:var(--ink);">⏳ TR</strong> — تجريبي محدود</div>
+          <div><strong style="color:var(--ink);">YYMMDD</strong> — تاريخ الانتهاء، مثال: <span class="mono">261231</span></div>
+          <div><strong style="color:var(--ink);">التوقيع</strong> — HMAC-SHA256 (8 أحرف)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- License History -->
+  <div class="sec"><span>سجل التراخيص المولّدة</span></div>
+
+  <div class="stats-grid">
+    <div class="stat"><div class="sv" id="statTotal">0</div><div class="sl">إجمالي التراخيص</div></div>
+    <div class="stat"><div class="sv" id="statActive">0</div><div class="sl">نشطة</div></div>
+    <div class="stat"><div class="sv" id="statExpired">0</div><div class="sl">منتهية</div></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <span style="font-size:13px;font-weight:700;">جميع التراخيص</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-outline" onclick="exportCSV()">⬇️ تصدير CSV</button>
+        <button class="btn btn-sm btn-danger" onclick="clearHistory()">🗑️ مسح السجل</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>العميل</th><th>النوع</th><th>المفتاح</th><th>الانتهاء</th><th>الحالة</th><th>نسخ</th><th>حذف</th></tr>
+        </thead>
+        <tbody id="licTable"><tr><td colspan="7" class="empty-table">لا توجد تراخيص مولّدة بعد</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════
+   CRYPTO HELPERS
+════════════════════════════ */
+async function hmac8(secret, data){
+  const enc=new TextEncoder();
+  const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  const sig=await crypto.subtle.sign('HMAC',key,enc.encode(data));
+  return Array.from(new Uint8Array(sig)).slice(0,4).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
+function expiryToYMD(date){
+  const y=String(date.getFullYear()).slice(2), m=String(date.getMonth()+1).padStart(2,'0'), d=String(date.getDate()).padStart(2,'0');
+  return y+m+d;
+}
+
+/* ════════════════════════════
+   STATE
+════════════════════════════ */
+const STORE_KEY='tajer-lic-history';
+let selectedTier='PR', selectedDur=180;
+let history=[];
+
+function loadHistory(){
+  try{ history=JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch(e){ history=[]; }
+  renderTable(); updateStats();
+}
+function saveHistory(){ localStorage.setItem(STORE_KEY,JSON.stringify(history)); }
+
+/* ════════════════════════════
+   UI STATE
+════════════════════════════ */
+function setTier(t){
+  selectedTier=t;
+  document.querySelectorAll('#tierSeg button').forEach(b=>b.classList.toggle('on',b.dataset.tier===t));
+}
+function setDur(d){
+  selectedDur=d;
+  document.querySelectorAll('#durSeg button').forEach(b=>b.classList.toggle('on',Number(b.dataset.dur)===d));
+  document.getElementById('customDate').value='';
+}
+function toggleSecret(){
+  const inp=document.getElementById('secretKey');
+  inp.type=inp.type==='password'?'text':'password';
+  document.getElementById('toggleSecret').textContent=inp.type==='password'?'إظهار':'إخفاء';
+}
+function generateSecret(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+  let s=''; for(let i=0;i<32;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('secretKey').value=s;
+  document.getElementById('secretKey').type='text';
+  document.getElementById('toggleSecret').textContent='إخفاء';
+  toast('مفتاح جديد — انسخه واستخدمه في التطبيق أيضاً!');
+}
+
+/* ════════════════════════════
+   GENERATE
+════════════════════════════ */
+async function generateKey(){
+  const secret=document.getElementById('secretKey').value.trim();
+  if(!secret){ toast('⚠️ أدخل المفتاح السري أولاً'); return; }
+  const custName=document.getElementById('custName').value.trim()||'—';
+
+  let expiry;
+  const custom=document.getElementById('customDate').value;
+  if(custom){ expiry=new Date(custom); expiry.setHours(23,59,59); }
+  else{ expiry=new Date(); expiry.setDate(expiry.getDate()+selectedDur); }
+  if(isNaN(expiry.getTime())||expiry<=new Date()){ toast('⚠️ تاريخ انتهاء غير صحيح'); return; }
+
+  const ymd=expiryToYMD(expiry);
+  const sig=await hmac8(secret, selectedTier+ymd);
+  const key=`TAJER-${selectedTier}-${ymd}-${sig}`;
+  const daysLeft=Math.ceil((expiry-new Date())/864e5);
+
+  // Show result
+  const rb=document.getElementById('resultBox');
+  document.getElementById('resultKey').textContent=key;
+  document.getElementById('resultMeta').textContent=`${tierLabel(selectedTier)} · ينتهي ${expiry.toLocaleDateString('ar-DZ')} (${daysLeft} يوم)`;
+  rb.style.display='block';
+
+  // Save to history
+  history.unshift({key,tier:selectedTier,custName,expiry:expiry.toISOString(),createdAt:new Date().toISOString(),daysLeft});
+  saveHistory(); renderTable(); updateStats();
+}
+
+function copyKey(){
+  const k=document.getElementById('resultKey').textContent;
+  navigator.clipboard.writeText(k).then(()=>toast('تم نسخ المفتاح ✓')).catch(()=>toast(k));
+}
+
+/* ════════════════════════════
+   VERIFY
+════════════════════════════ */
+async function verifyKey(){
+  const secret=document.getElementById('vSecret').value.trim()||document.getElementById('secretKey').value.trim();
+  const keyStr=document.getElementById('vKey').value.trim().toUpperCase();
+  const el=document.getElementById('vResult');
+  el.style.display='block';
+  if(!secret){ el.style.background=getComputedStyle(document.documentElement).getPropertyValue('--danger-soft'); el.innerHTML='⚠️ أدخل المفتاح السري'; return; }
+  const parts=keyStr.split('-');
+  if(parts.length!==4||parts[0]!=='TAJER'){ el.style.background='#fef2f2'; el.innerHTML='❌ صيغة المفتاح غير صحيحة'; return; }
+  const [,tier,ymd,sig]=parts;
+  if(!/^(PR|BS|TR)$/.test(tier)){ el.style.background='#fef2f2'; el.innerHTML='❌ نوع الترخيص غير معروف'; return; }
+  const yr=2000+parseInt(ymd.slice(0,2)),mo=parseInt(ymd.slice(2,4))-1,dy=parseInt(ymd.slice(4,6));
+  const expiry=new Date(yr,mo,dy,23,59,59);
+  const daysLeft=Math.ceil((expiry-new Date())/864e5);
+  const expected=await hmac8(secret, tier+ymd);
+  if(sig!==expected){ el.style.background='#fef2f2'; el.innerHTML=`❌ التوقيع غير صحيح<br><small>متوقع: <span class="mono">${expected}</span> · المُدخل: <span class="mono">${sig}</span></small>`; return; }
+  const ok=daysLeft>0;
+  el.style.background=ok?'#f0faf5':'#fef2f2';
+  el.innerHTML=`${ok?'✅':'⌛'} المفتاح ${ok?'صالح':'منتهي الصلاحية'}<br>
+    <span style="font-size:12px;color:var(--muted);">النوع: ${tierLabel(tier)} · الانتهاء: ${expiry.toLocaleDateString('ar-DZ')} · ${ok?`متبقي ${daysLeft} يوم`:'منذ '+Math.abs(daysLeft)+' يوم'}</span>`;
+}
+
+/* ════════════════════════════
+   TABLE & STATS
+════════════════════════════ */
+function tierLabel(t){ return {PR:'💎 احترافي',BS:'⭐ أساسي',TR:'⏳ تجريبي'}[t]||t; }
+
+function renderTable(){
+  document.getElementById('totalBadge').textContent=history.length+' ترخيص';
+  const tbody=document.getElementById('licTable');
+  if(!history.length){ tbody.innerHTML='<tr><td colspan="7" class="empty-table">لا توجد تراخيص مولّدة بعد</td></tr>'; return; }
+  tbody.innerHTML=history.map((h,i)=>{
+    const exp=new Date(h.expiry);
+    const dl=Math.ceil((exp-new Date())/864e5);
+    const active=dl>0;
+    return `<tr>
+      <td>${escHtml(h.custName)}</td>
+      <td><span class="tier-badge tier-${h.tier}">${tierLabel(h.tier)}</span></td>
+      <td class="mono-cell">${escHtml(h.key)}</td>
+      <td class="${active?'exp-ok':'exp-warn'}">${exp.toLocaleDateString('ar-DZ')}</td>
+      <td class="${active?'exp-ok':'exp-warn'}">${active?`${dl} يوم`:'منتهي'}</td>
+      <td class="copy-cell" onclick="copyLic('${escHtml(h.key)}')" title="نسخ">📋</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteLic(${i})">حذف</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStats(){
+  const total=history.length;
+  const active=history.filter(h=>Math.ceil((new Date(h.expiry)-new Date())/864e5)>0).length;
+  document.getElementById('statTotal').textContent=total;
+  document.getElementById('statActive').textContent=active;
+  document.getElementById('statExpired').textContent=total-active;
+}
+
+function copyLic(key){
+  navigator.clipboard.writeText(key).then(()=>toast('تم النسخ ✓')).catch(()=>toast(key));
+}
+function deleteLic(i){
+  if(!confirm('حذف هذا الترخيص من السجل؟')) return;
+  history.splice(i,1); saveHistory(); renderTable(); updateStats();
+}
+function clearHistory(){
+  if(!confirm('مسح كل سجل التراخيص نهائياً؟')) return;
+  history=[]; saveHistory(); renderTable(); updateStats();
+  document.getElementById('resultBox').style.display='none';
+}
+
+function exportCSV(){
+  if(!history.length){ toast('لا توجد بيانات للتصدير'); return; }
+  const rows=[['المفتاح','النوع','العميل','الانتهاء','تاريخ الإنشاء'],...history.map(h=>[h.key,h.tier,h.custName,new Date(h.expiry).toLocaleDateString('ar-DZ'),new Date(h.createdAt).toLocaleDateString('ar-DZ')])];
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='تراخيص-تاجر.csv'; a.click();
+}
+
+function escHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),2400);
+}
+
+loadHistory();
+</script>
+</body>
+</html>
